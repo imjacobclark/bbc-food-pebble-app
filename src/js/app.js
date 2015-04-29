@@ -1,12 +1,5 @@
-/**
- * Welcome to Pebble.js!
- *
- * This is where you write your app.
- */
-
-var UI = require('ui');
-var Vector2 = require('vector2');
-var ajax = require('ajax');
+var UI = require('ui'),
+    ajax = require('ajax');
 
 function parseStepData(data){
     var steps = [];
@@ -15,19 +8,17 @@ function parseStepData(data){
     while(i < Object.keys(data[1].steps).length){
         var step = {
             title: 'Step ' + (i+1) + ' - ' + data[1].steps[i.toString()]
-        }
-    
+        };
+      
         steps.push(step);
-
         i++;
-    
-    };
+    }
 
     return steps; 
 }
 
 function getStep(data, step){
-    return data[1].steps[step.toString()]
+    return data[1].steps[step.toString()];
 }
 
 var main = new UI.Card({
@@ -44,7 +35,7 @@ main.on('click', 'up', function(e) {
     ajax({
         url: 'http://blog.jacob.uk.com:9111',
         type: 'json'
-    },
+    },    
     function(data) {
         var menu = new UI.Menu({
             sections: [{
@@ -60,12 +51,14 @@ main.on('click', 'up', function(e) {
         });
 
         menu.on('select', function(e) {
-            if(e.itemIndex == 0){
-                var card = new UI.Card();
-                card.title('About this dish');
-                card.body(data[0].summary.title);
-                card.scrollable(true);
-                card.style('large');
+            if(e.itemIndex === 0){
+                var card = new UI.Card({
+                  title: 'About this dish',
+                  body: data[0].summary.title,
+                  scrollable: true,
+                  style: 'large'
+                });
+
                 card.show();
             }else if(e.itemIndex == 1){
                  var prep = new UI.Menu({
@@ -74,14 +67,13 @@ main.on('click', 'up', function(e) {
                         items: parseStepData(data)
                     }]
                 });
-
+              
                 prep.on('select', function(e) {
-                    console.log('selecting!')
                     var card = new UI.Card();
                     card.title('Step ' + (e.itemIndex + 1));
                     card.body(getStep(data, e.itemIndex));
                     card.scrollable(true);
-                    card.style('large')
+                    card.style('large');
                     card.show();
                 });
 
@@ -92,11 +84,11 @@ main.on('click', 'up', function(e) {
         menu.show();
     },
     function(error) {
-        var card = new UI.Card();
-        card.title('Oops...');
-        card.body('There was an issue, restart the app.');
+        var card = new UI.Card({
+          title: 'Oops...',
+          body: 'Couldn\'t get recipe, check your internet connection'
+        });
+    
         card.show();
     });
 });
-
-
